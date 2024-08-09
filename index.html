@@ -22,7 +22,10 @@
 	<h2>Bookmarklet - One Gán BC</h2>
 	<a href="" class="bookmarklet" id="bookmarklet-6">One_GánBC</a>
 </div>
-
+<div>
+	<h2>Bookmarklet - One Tạo BC</h2>
+	<a href="" class="bookmarklet" id="bookmarklet-7">One_TạoBC</a>
+</div>
 <script>
 function script_vnPortal_autoRole(){
 		return `
@@ -358,6 +361,90 @@ if (document.URL.indexOf("cdpn.io") < 0) {
 }
 `;
 }
+
+	
+function script_One_TaoBC(){
+		return `
+
+/*=============================================================================================*/
+
+/*
+ * Dùng để tạo mới BC trong OneBSS
+ */
+
+async function script_One_TaoBC(input) {	
+	let logger = [];
+	try {
+		if (input[0] === '"' && input.length-2 === '"'){
+			input = input.substr(1,input.length-2);
+		}
+		input_split = input.split("||");
+		input_json = {
+			"BAOCAO_ID": 0,
+			"PHANVUNG_ID": "2",
+			"MA_BC": input_split[2],
+			"NHOM_BC_ID": "",
+			"TEN_BC": input_split[1],
+			"TRANGTHAI": 1,
+			"GHICHU": "",
+			"CAULENH": input_split[3],
+			"THUTU": input_split[0],
+			"LOAIHD_ID": 0,
+			"THUTUC": "",
+			"XUAT_EXCEL": 0
+		};
+		const url = 'https://api-one'+'bss.vnpt.vn/web-quantri/danhmuc-chung/fn_thietke_baocao_capnhat';	
+		const token = JSON.parse(localStorage.getItem('One'+'BSS-Token')).access_token;
+		let nhom_bc_id = document.querySelector('.box-form .row:nth-child(3) select').value;
+		logger.push("nhom_bc_id::" + nhom_bc_id);
+		input_json["NHOM_BC_ID"] = nhom_bc_id;
+		const data = {
+			"p_ds_baocao": JSON.stringify(input_json),
+			"p_ds_baocao_hg": "[]",
+			"p_ds_baocao_phanvungs": "[]",
+			"p_kieu": 1
+		};
+
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + token
+			},
+			body: JSON.stringify(data)
+		};
+		
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    console.log('Success:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error:', error);
+    return {
+			message: "Error::script_One_GanBC_QuyenId",
+			message_detail: logger.toString()
+		};
+  }		
+}
+async function main(input){	
+	let result = await script_One_TaoBC(input);
+	if (result.message == "Success"){
+		alert('Đã tạo thành công');
+	} 
+	else {
+		alert("Có lỗi xảy ra: " + result.message + ":" +  + result.message_detail);
+	}
+}
+if (document.URL.indexOf("cdpn.io") < 0) {
+	if (document.URL.indexOf("one"+"bss.vnpt.vn") >=0){		
+		let input = prompt("Điền JSON tạo mới BC");
+		if (input){
+			main(input);
+		}
+	}
+}
+`;
+}
 	
 	document.getElementById('bookmarklet-1').setAttribute("href", 'javascript:(function(){' + script_vnPortal_autoRole() + '}())');
 	document.getElementById('bookmarklet-2').setAttribute("href", 'javascript:(function(){' + script_adsSMSBrandname() + '}())');
@@ -365,5 +452,6 @@ if (document.URL.indexOf("cdpn.io") < 0) {
 	document.getElementById('bookmarklet-4').setAttribute("href", 'javascript:(function(){' + script_vnPortal_permCategory() + '}())');	
 	document.getElementById('bookmarklet-5').setAttribute("href", 'javascript:(function(){' + script_vnPortal_deleteArticle() + '}())');
 	document.getElementById('bookmarklet-6').setAttribute("href", 'javascript:(function(){' + script_One_GanBC_QuyenId() + '}())');	
+	document.getElementById('bookmarklet-7').setAttribute("href", 'javascript:(function(){' + script_One_TaoBC() + '}())');	
 
 </script>

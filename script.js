@@ -334,3 +334,65 @@ if (document.URL.indexOf("cdpn.io") < 0) {
 		}
 	}
 }
+
+
+
+/*=============================================================================================*/
+
+/*
+ * Dùng để tạo mới BC trong OneBSS
+ */
+
+async function script_One_TaoBC(json) {	
+	let logger = [];
+	try {
+		json = json.substr(1 , json.length-2);
+		const url = 'https://api-one'+'bss.vnpt.vn/web-quantri/quanlyquyen/sp_action_ds_quyen_baocao';	
+		const token = JSON.parse(localStorage.getItem('One'+'BSS-Token')).access_token;
+		let nhom_bc_id = document.querySelector('.box-form .row:nth-child(3) select').value;
+		logger.push("nhom_bc_id::" + nhom_bc_id);
+		const data = {
+			"p_baocao_id_arr": json.replace("%1", nhom_bc_id),
+			"p_ds_baocao_hg": "[]",
+			"p_ds_baocao_phanvungs": "[]",
+			"p_kieu": 1
+		};
+
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + token
+			},
+			body: JSON.stringify(data)
+		};
+		
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    console.log('Success:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error:', error);
+    return {
+			message: "Error::script_One_GanBC_QuyenId",
+			message_detail: logger.toString()
+		};
+  }		
+}
+async function main(json){	
+	let result = await script_One_TaoBC(json);
+	if (result.message == "Success"){
+		alert('Đã tạo thành công');
+	} 
+	else {
+		alert("Có lỗi xảy ra: " + result.message + ":" +  + result.message_detail);
+	}
+}
+if (document.URL.indexOf("cdpn.io") < 0) {
+	if (document.URL.indexOf("one"+"bss.vnpt.vn") >=0){		
+		let json = prompt("Điền JSON tạo mới BC");
+		if (json){
+			main(json);
+		}
+	}
+}
