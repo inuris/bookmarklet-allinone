@@ -277,7 +277,7 @@ if (document.URL.indexOf("cdpn.io") < 0) {
 /*=============================================================================================*/
 
 /*
- * Dùng để gán BC theo QUYEN_ID trong One
+ * Dùng để gán BC theo QUYEN_ID trong One /#/print/CauHinhBaoCao
  */
 
 async function script_One_GanBC_QuyenId(quyen_id) {	
@@ -317,21 +317,43 @@ async function script_One_GanBC_QuyenId(quyen_id) {
 		};
   }		
 }
-async function main(quyen_id){	
-	let result = await script_One_GanBC_QuyenId(quyen_id);
-	if (result.message == "Success"){
-		alert('Đã gán thành công');
-	} 
-	else {
-		alert("Có lỗi xảy ra: " + result.message + ":" +  + result.message_detail);
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+async function main(quyen_ids){
+	try {
+		let quyen_ids_arr = quyen_ids.split(' ').join('').split(',');
+		let logger_html = document.querySelector('.box-form .row:nth-child(5) .info-row:nth-child(4) .value');
+		logger_html.innerHTML = "";
+		for (let i=0;i<quyen_ids_arr.length;i++){
+			let quyen_id = quyen_ids_arr[i];
+			let result = await script_One_GanBC_QuyenId(quyen_id);
+			if (result.message == "Success"){
+				logger_html.innerHTML += '<p style="color:green">' + quyen_id + ': Đã gán mới</p>';
+			} 
+			else {
+				if (result.message_detail.indexOf('unique constraint')>=0){
+					logger_html.innerHTML += '<p style="color:green">' + quyen_id + ': Đã tồn tại</p>';
+				}
+				else{
+					logger_html.innerHTML += '<p style="color:red">' + quyen_id + ': Lỗi: ' + result.message_detail + '</p>';
+				}
+				
+			}
+			await delay(500);
+		}
+	}
+	catch(e){
+		console.log(e);
 	}
 }
 if (document.URL.indexOf("cdpn.io") < 0) {
-	if (document.URL.indexOf("one"+"bss.vnpt.vn") >=0){		
-		let quyen_id = prompt("Điền QUYEN_ID cần gán (Quản trị hệ thống:0)",0);
-		if (quyen_id){
-			main(quyen_id);
+	if (document.URL.indexOf("one"+"bss.vnpt.vn") >=0 && document.URL.indexOf("CauHinhBaoCao") >=0){
+		let dsquyen = prompt("Điền các QUYEN_ID cần gán (cách nhau bằng dấu phẩy)");
+		if (dsquyen){
+			main(dsquyen);
 		}
+	} else 
+	{
+		alert("Sử dụng tại trang CauHinhBaoCao");
 	}
 }
 
