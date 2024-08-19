@@ -1,29 +1,29 @@
 <div class="container">
-	<div class="box">
+	<div class="box red">
 		<h3>vnPortal - Gán role quản trị tin tức</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-1">vnPortal-AutoRole</a>
 	</div>
-	<div class="box">
+	<div class="box red">
 		<h3>vnPortal - Phân quyền Tin theo Chuyên mục</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-4">vnPortal-AutoPerm</a>
 	</div>
-	<div class="box">
+	<div class="box red">
 		<h3>vnPortal - Xóa nhiều tin trong Category</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-5">vnPortal-DelArticle</a>
 	</div>
-	<div class="box">
+	<div class="box green">
 		<h3>SMSBrandname</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-2">adsSMSBrandname</a>
 	</div>
-	<div class="box">
+	<div class="box blue">
 		<h3>One - Send POST</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-3">One-POST</a>
 	</div>
-	<div class="box">
+	<div class="box blue">
 		<h3>One - Gán BC</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-6">One-GánBC</a>
 	</div>
-	<div class="box">
+	<div class="box blue">
 		<h3>One - Tạo BC</h3>
 		<a href="" class="bookmarklet" id="bookmarklet-7">One-TạoBC</a>
 	</div>
@@ -378,9 +378,8 @@ if (document.URL.indexOf("cdpn.io") < 0) {
 		if (dsquyen){
 			main(dsquyen);
 		}
-	} else 
-	{
-		alert("Sử dụng tại trang CauHinhBaoCao");
+	} else {
+		window.location.href = "https://one" + "bss.vnpt.vn/#/print/CauHinhBaoCao";
 	}
 }
 `;
@@ -393,14 +392,14 @@ function script_One_TaoBC(){
 /*=============================================================================================*/
 
 /*
- * Dùng để tạo mới BC trong OneBSS
+ * Dùng để tạo mới BC trong One /#/print/CauHinhBaoCao
  */
 
-async function script_One_TaoBC(input) {	
+async function script_One_TaoBC(input) {
 	let logger = [];
 	try {
-		if (input[0] === '"' && input.length-2 === '"'){
-			input = input.substr(1,input.length-2);
+		if (input[0] === '"' && input.length - 2 === '"') {
+			input = input.substr(1, input.length - 2);
 		}
 		input_split = input.split("||");
 		input_json = {
@@ -417,8 +416,8 @@ async function script_One_TaoBC(input) {
 			"THUTUC": "",
 			"XUAT_EXCEL": 0
 		};
-		const url = 'https://api-one'+'bss.vnpt.vn/web-quantri/danhmuc-chung/fn_thietke_baocao_capnhat';	
-		const token = JSON.parse(localStorage.getItem('One'+'BSS-Token')).access_token;
+		const url = 'https://api-one' + 'bss.vnpt.vn/web-quantri/danhmuc-chung/fn_thietke_baocao_capnhat';
+		const token = JSON.parse(localStorage.getItem('One' + 'BSS-Token')).access_token;
 		let nhom_bc_id = document.querySelector('.box-form .row:nth-child(3) select').value;
 		logger.push("nhom_bc_id::" + nhom_bc_id);
 		input_json["NHOM_BC_ID"] = nhom_bc_id;
@@ -437,34 +436,37 @@ async function script_One_TaoBC(input) {
 			},
 			body: JSON.stringify(data)
 		};
-		
-    const response = await fetch(url, options);
-    const responseData = await response.json();
-    console.log('Success:', responseData);
-    return responseData;
-  } catch (error) {
-    console.error('Error:', error);
-    return {
+
+		const response = await fetch(url, options);
+		const responseData = await response.json();
+		console.log('Success:', responseData);
+		return responseData;
+	} catch (error) {
+		console.error('Error:', error);
+		return {
 			message: "Error::script_One_GanBC_QuyenId",
 			message_detail: logger.toString()
 		};
-  }		
+	}
 }
-async function main(input){	
+async function main(input) {
 	let result = await script_One_TaoBC(input);
-	if (result.message == "Success"){
+	if (result.message == "Success") {
 		alert('Đã tạo thành công');
-	} 
+	}
 	else {
-		alert("Có lỗi xảy ra: " + result.message + ":" +  + result.message_detail);
+		alert("Có lỗi xảy ra: " + result.message + ":" + + result.message_detail);
 	}
 }
 if (document.URL.indexOf("cdpn.io") < 0) {
-	if (document.URL.indexOf("one"+"bss.vnpt.vn") >=0){		
+	if (document.URL.indexOf("one" + "bss.vnpt.vn") >= 0) {
 		let input = prompt("Điền JSON tạo mới BC");
-		if (input){
+		if (input) {
 			main(input);
 		}
+	}
+	else {
+		window.location.href = "https://one" + "bss.vnpt.vn/#/print/CauHinhBaoCao";
 	}
 }
 `;
