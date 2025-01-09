@@ -320,7 +320,7 @@ async function script_One_GanBC_QuyenId(quyen_id) {
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function main(quyen_ids) {
 	try {
-		let quyen_ids_arr = quyen_ids.replace(new RegExp('[^0-9,]','gm'),'').split(',');
+		let quyen_ids_arr = quyen_ids.split(' ').join('').split(',');
 		let logger_html = document.querySelector('.box-form .row:nth-child(5) .info-row:nth-child(4) .value');
 		logger_html.innerHTML = "";
 		for (let i = 0; i < quyen_ids_arr.length; i++) {
@@ -347,7 +347,7 @@ async function main(quyen_ids) {
 }
 if (document.URL.indexOf("cdpn.io") < 0) {
 	if (document.URL.indexOf("one" + "bss.vnpt.vn") >= 0 && document.URL.indexOf("CauHinhBaoCao") >= 0) {
-		let dsquyen = prompt("Điền các QUYEN_ID cần gán (cách nhau bằng dấu phẩy)");
+		let dsquyen = prompt("Điền các QUYEN_ID cần gán (cách nhau bằng dấu phẩy)", "0,453111294");
 		if (dsquyen) {
 			main(dsquyen);
 		}
@@ -428,7 +428,7 @@ async function main(input) {
 	}
 }
 if (document.URL.indexOf("cdpn.io") < 0) {
-	if (document.URL.indexOf("one" + "bss.vnpt.vn") >= 0) {
+	if (document.URL.indexOf("one" + "bss.vnpt.vn") >= 0 && document.URL.indexOf("CauHinhBaoCao") >= 0) {
 		let input = prompt("Điền JSON tạo mới BC");
 		if (input) {
 			main(input);
